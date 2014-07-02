@@ -2,9 +2,8 @@ require './lib/html/patterns'
 require './lib/converter/htmltomd'
 
 patterns = HTML::Patterns.new
-#puts patterns.getMdTag("h4".to_sym)
 
-hmd = CONVERTER::HtmlToMd.new("C:/Users/Gabriel/Documents/FileOut.html")
+hmd = CONVERTER::HtmlToMd.new("../../FileOut.html")
 
 preTagReg = /<(ul|ol|)\b[^>]*>([\s\S]*)<\/|ul|ol>/
 
