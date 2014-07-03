@@ -3,69 +3,67 @@ module HTML
     def initialize()
      #base html tags with their replacements lambda
       @tags = {
-        
-        :h1      => lambda {|htmlContent|
+        :h1=>lambda{|htmlContent|
           htmlContent.gsub!(/<h1\b[^>]*>/, "#")
           htmlContent.gsub!( /<\/h1>/, "")
         },
-        :h2      => lambda { |htmlContent|
+        :h2=>lambda{|htmlContent|
           htmlContent.gsub!(/<h2\b[^>]*>/, "##")
           htmlContent.gsub!( /<\/h2>/, "")
         },
-        :h3      => lambda { |htmlContent|
+        :h3=>lambda{|htmlContent|
           htmlContent.gsub!(/<h3\b[^>]*>/, "###")
           htmlContent.gsub!( /<\/h3>/, "")
         },
-        :h4      => lambda { |htmlContent| 
+        :h4=>lambda{ |htmlContent| 
           htmlContent.gsub!(/<h4\b[^>]*>/, "####")
           htmlContent.gsub!( /<\/h4>/, "")
         },
-        :h5      => lambda { |htmlContent| 
+        :h5=>lambda{|htmlContent| 
           htmlContent.gsub!(/<h5\b[^>]*>/, "#####")
           htmlContent.gsub!( /<\/h5>/, "")
         },
-        :h6      => lambda { |htmlContent| 
+        :h6=>lambda{|htmlContent| 
           htmlContent.gsub!(/<h6\b[^>]*>/, "######")
           htmlContent.gsub!( /<\/h6>/, "")
         },
-        :i       => lambda { |htmlContent| 
+        :i=>lambda{|htmlContent| 
           htmlContent.gsub!(/<i\b[^>]*>/, "_")
           htmlContent.gsub!( /<\/i>/, "_")
         },
-        :em      => lambda { |htmlContent| 
+        :em=>lambda{|htmlContent| 
           htmlContent.gsub!(/<em\b[^>]*>/, "_")
           htmlContent.gsub!( /<\/em>/, "_")
         },
-        :b       => lambda { |htmlContent| 
+        :b=>lambda{|htmlContent| 
           htmlContent.gsub!(/<b\b[^>]*>/, "**")
           htmlContent.gsub!( /<\/b>/, "**")
         },
-        :strong  => lambda { |htmlContent| 
+        :strong=>lambda{|htmlContent| 
           htmlContent.gsub!(/<strong\b[^>]*>/, "**")
           htmlContent.gsub!( /<\/strong>/, "**")
         },
-        :strike  => lambda {|htmlContent| 
+        :strike=>lambda{|htmlContent| 
           htmlContent.gsub!(/<strike\b[^>]*>/, "~~")
           htmlContent.gsub!( /<\/strike>/, "~~")
         },
-        :br      => lambda { |htmlContent| 
+        :br=>lambda{|htmlContent| 
           htmlContent.gsub!(/<br\b[^>]*>/, "\n")
           htmlContent.gsub!(/<\/br>/, "\n")
         },
-        :hr      => lambda { |htmlContent| 
+        :hr=>lambda{|htmlContent| 
           htmlContent.gsub!(/<hr\b[^>]*>/, "\n * * * \n")
           htmlContent.gsub!(/<\/hr>/, "\n * * * \n")
         },
-        :code    => lambda { |htmlContent| 
+        :code=>lambda{|htmlContent| 
           htmlContent.gsub!(/<code\b[^>]*>/, "`")
           htmlContent.gsub!(/<\/code>/, "`")
         },
-        :p       => lambda { |htmlContent| 
+        :p=>lambda{|htmlContent| 
           htmlContent.gsub!(/<p\b[^>]*>/, "\n")
           htmlContent.gsub!(/<\/p>/, "\n")
         },
-        :a       => lambda { |htmlContent|
-          
+        :a=>lambda{|htmlContent|
           # will contain the elements to replace once we've dealed with the scan
           elementsToReplace = {}
         
@@ -75,7 +73,7 @@ module HTML
           aElementReg = /(<a\s+(?:[^>]*?\s+)?href="([^"]*)">([\s\S]*?)<\/a>)/
           
           #Loop trough all the matches
-          htmlContent.scan(aElementReg) {|pattern|
+          htmlContent.scan(aElementReg){|pattern|
             # Build the hashmap of string => array
             elementsToReplace[pattern[0]] = [pattern[2], pattern[1]]
           }
@@ -85,8 +83,7 @@ module HTML
             htmlContent.gsub!(rawElement, "[#{values[0]}](#{values[1]})")
           end
         },
-        :img     => lambda { |htmlContent|
-          
+        :img=>lambda{|htmlContent|
           # this one ain't gonna be pretty sorry !
           #" ![](./pic/pic1s.png =250x)
           #<\s*img\s*alt="?(.*?)"?\s*src="?(.*?)"?\s*width="?(.*?)"?\s*height="?(.*?)"?\s*\/?>
@@ -118,6 +115,8 @@ module HTML
           elementsToReplace.each do |rawElement, values|
             htmlContent.gsub!(rawElement, "![#{values[0]}](#{values[1]})")
           end
+        },
+        :ol =>lambda{|htmlContent| 
         }
       }
       
