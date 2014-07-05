@@ -1,69 +1,79 @@
 module HTML
+  
+  ##
+  # Class
+  # @author Gabriel Désilets
+  # This class handle the patterns and their replacements
+  
   class Patterns    
+    
+    ##
+    # Initialize the tags and their replacements
+    
     def initialize()
-     #base html tags with their replacements lambda
       @tags = {
-        :h1=>lambda{|htmlContent|
+        :h1 => lambda{|htmlContent|
           htmlContent.gsub!(/<h1\b[^>]*>/, "#")
           htmlContent.gsub!( /<\/h1>/, "")
         },
-        :h2=>lambda{|htmlContent|
+        :h2 => lambda{|htmlContent|
           htmlContent.gsub!(/<h2\b[^>]*>/, "##")
           htmlContent.gsub!( /<\/h2>/, "")
         },
-        :h3=>lambda{|htmlContent|
+        :h3 => lambda{|htmlContent|
           htmlContent.gsub!(/<h3\b[^>]*>/, "###")
           htmlContent.gsub!( /<\/h3>/, "")
         },
-        :h4=>lambda{ |htmlContent| 
+        :h4 => lambda{ |htmlContent| 
           htmlContent.gsub!(/<h4\b[^>]*>/, "####")
           htmlContent.gsub!( /<\/h4>/, "")
         },
-        :h5=>lambda{|htmlContent| 
+        :h5 => lambda{|htmlContent| 
           htmlContent.gsub!(/<h5\b[^>]*>/, "#####")
           htmlContent.gsub!( /<\/h5>/, "")
         },
-        :h6=>lambda{|htmlContent| 
+        :h6 => lambda{|htmlContent| 
           htmlContent.gsub!(/<h6\b[^>]*>/, "######")
           htmlContent.gsub!( /<\/h6>/, "")
         },
-        :i=>lambda{|htmlContent| 
+        :i => lambda{|htmlContent| 
           htmlContent.gsub!(/<i\b[^>]*>/, "_")
           htmlContent.gsub!( /<\/i>/, "_")
         },
-        :em=>lambda{|htmlContent| 
+        :em => lambda{|htmlContent| 
           htmlContent.gsub!(/<em\b[^>]*>/, "_")
           htmlContent.gsub!( /<\/em>/, "_")
         },
-        :b=>lambda{|htmlContent| 
+        :b => lambda{|htmlContent| 
           htmlContent.gsub!(/<b\b[^>]*>/, "**")
           htmlContent.gsub!( /<\/b>/, "**")
         },
-        :strong=>lambda{|htmlContent| 
+        :strong => lambda{|htmlContent| 
           htmlContent.gsub!(/<strong\b[^>]*>/, "**")
           htmlContent.gsub!( /<\/strong>/, "**")
         },
-        :strike=>lambda{|htmlContent| 
+        :strike => lambda{|htmlContent| 
           htmlContent.gsub!(/<strike\b[^>]*>/, "~~")
           htmlContent.gsub!( /<\/strike>/, "~~")
         },
-        :br=>lambda{|htmlContent| 
+        :br => lambda{|htmlContent| 
           htmlContent.gsub!(/<br\b[^>]*>/, "\n")
           htmlContent.gsub!(/<\/br>/, "\n")
         },
-        :hr=>lambda{|htmlContent| 
+        :hr => lambda{|htmlContent| 
           htmlContent.gsub!(/<hr\b[^>]*>/, "\n * * * \n")
           htmlContent.gsub!(/<\/hr>/, "\n * * * \n")
         },
-        :code=>lambda{|htmlContent| 
+        :code => lambda{|htmlContent| 
           htmlContent.gsub!(/<code\b[^>]*>/, "`")
           htmlContent.gsub!(/<\/code>/, "`")
         },
-        :p=>lambda{|htmlContent| 
+        :p => lambda{|htmlContent| 
           htmlContent.gsub!(/<p\b[^>]*>/, "\n")
           htmlContent.gsub!(/<\/p>/, "\n")
         },
-        :a=>lambda{|htmlContent|
+        :a => lambda{|htmlContent|
+          
           # will contain the elements to replace once we've dealed with the scan
           elementsToReplace = {}
         
@@ -83,7 +93,8 @@ module HTML
             htmlContent.gsub!(rawElement, "[#{values[0]}](#{values[1]})")
           end
         },
-        :img=>lambda{|htmlContent|
+        :img => lambda{|htmlContent|
+          
           # this one ain't gonna be pretty sorry !
           #" ![](./pic/pic1s.png =250x)
           #<\s*img\s*alt="?(.*?)"?\s*src="?(.*?)"?\s*width="?(.*?)"?\s*height="?(.*?)"?\s*\/?>
@@ -116,16 +127,44 @@ module HTML
             htmlContent.gsub!(rawElement, "![#{values[0]}](#{values[1]})")
           end
         },
-        :ol =>lambda{|htmlContent| 
-        }
+        :list => lambda{|htmlContent|replaceLists(htmlContent)}
       }
-      
-      # TODO parse these fuckers
-      @specialTags = ["ul", "li", "ol"]
     end
   
     def getTags()
       return @tags
     end   
+    
+    private 
+    
+    def replaceLists(htmlContent) 
+      ulolReg = /<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/
+      convertedEls = ""
+      
+      # will contain the elements to replace once we've dealed with the scan
+      elementsToReplace = {}
+          
+      htmlContent.scan(ulolReg) {|pattern|
+        lis = pattern[1].split('</li>')
+        lis = lis[0, lis.length - 1]
+        
+        for i in 0..lis.length - 1
+          if lis[i] then
+            prefix = pattern[0] == "ol" ? "#{i+1}. " : "* "
+            convertedEls = lis[i].sub(lis[i], "#{prefix}#{lis[i].match(/\s*<li[^>]*>([\s\S]*)/)[1]}\n")
+            elementsToReplace[convertedEls] = lis[i]
+          end
+        end 
+        #convertedEls << "\n"
+      }
+      
+      #Loop trough all the elements to replace
+      elementsToReplace.each do |value, rawElement|
+        #puts rawElement
+        htmlContent.gsub!(rawElement, value)
+      end
+      htmlContent.gsub!(/<ul\b[^>]*>|<ol\b[^>]*>/, "")
+      htmlContent.gsub!(/<\/ul>|<\/ol>|<\/li>/, "")
+    end      
   end
 end

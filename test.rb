@@ -5,6 +5,4 @@ patterns = HTML::Patterns.new
 
 hmd = CONVERTER::HtmlToMd.new("../../FileOut.html")
 
-hmd.readHtmlFile()
-#hmd.showRawContent()
 hmd.convert()
