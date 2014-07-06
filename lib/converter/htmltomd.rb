@@ -60,7 +60,7 @@ module CONVERTER
       
       #TODO output the converted content into a .md instead of showing it
       
-      puts @htmlContent
+      #puts @htmlContent
     end 
       
   end
