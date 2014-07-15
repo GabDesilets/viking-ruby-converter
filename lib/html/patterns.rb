@@ -28,6 +28,10 @@ module HTML
           :code => ["code", "`", "`"],
           :p => ["p", $/, $/],
         }.each do |tag, value|
+          
+          # value[0] => the tag
+          # value[1] => open replacement
+          # value[2] => close replacement
           @tags[tag] = simple_tag_matcher(value[0],value[1],value[2])
         end     
 
@@ -99,8 +103,9 @@ module HTML
     private 
     
     def simple_tag_matcher(tag, open_tag_replacement="", close_tag_replacement="")
-      open_tag_regex = Regexp.new("<#{tag}\b[^>]*>")
-      close_tag_regex = Regexp.new("<\/#{tag}>")
+      #puts "Tag => #{tag} close Replacement => #{close_tag_replacement}"
+      open_tag_regex = /<#{tag}\b[^>]*>/
+      close_tag_regex = /<\/#{tag}>/
       return lambda{ |content|
         content.gsub(open_tag_regex, open_tag_replacement).gsub(close_tag_regex, close_tag_replacement)
       }

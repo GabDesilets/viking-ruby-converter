@@ -29,12 +29,12 @@ module CONVERTER
       @md_output ||= @patterns.tags.values.inject(raw_content) do |result, element|
         element.call(result)
       end
+      puts @md_output
     end
     
     private 
     
       #TODO output the converted content into a .md instead of showing it
       
-      #puts @htmlContent
   end 
 end
