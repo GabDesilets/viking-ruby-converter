@@ -1,4 +1,4 @@
-module HTML
+module Viking
   
   ##
   # Class
@@ -10,32 +10,28 @@ module HTML
     ##
     # Initialize the tags and their replacements
     def initialize()
-      @tags = {}
-      {
-          :h1 => ["h1", "#", ""],
-          :h2 => ["h2", "##", ""],
-          :h3 => ["h3", "###", ""],
-          :h4 => ["h4", "####", ""],
-          :h5 => ["h5", "#####", ""],
-          :h6 => ["h6", "######", ""],
-          :i => ["i", "_", "_"],
-          :em => ["em", "_", "_"],
-          :b => ["b", "**", "**"],
-          :strong => ["strong", "**", "**"],
-          :strike => ["strike", "~~", "~~"],
-          :br => ["br", $/, $/],
-          :hr => ["hr", "* * *", "* * *"],
-          :code => ["code", "`", "`"],
-          :p => ["p", $/, $/],
-        }.each do |tag, value|
-          
-          # value[0] => the tag
-          # value[1] => open replacement
-          # value[2] => close replacement
-          @tags[tag] = simple_tag_matcher(value[0],value[1],value[2])
-        end     
+      @tags = []
+      [
+        ["h1", "#", ""],
+        ["h2", "##", ""],
+        ["h3", "###", ""],
+        ["h4", "####", ""],
+        ["h5", "#####", ""],
+        ["h6", "######", ""],
+        ["i", "_", "_"],
+        ["em", "_", "_"],
+        ["b", "**", "**"],
+        ["strong", "**", "**"],
+        ["strike", "~~", "~~"],
+        ["br", $/, $/],
+        ["hr", "* * *", "* * *"],
+        ["code", "`", "`"],
+        ["p", $/, $/],
+        ].each do |value|
+          @tags.push simple_tag_matcher(value[0],value[1],value[2])
+        end
 
-        @tags[:a] = lambda{|htmlContent|
+        @tags.push lambda{|htmlContent|
           
           # will contain the elements to replace once we've dealed with the scan
           elementsToReplace = {}
@@ -58,7 +54,7 @@ module HTML
           htmlContent
         }
 
-        @tags[:img] = lambda{|htmlContent|
+        @tags.push lambda{|htmlContent|
           
           # this one ain't gonna be pretty sorry !
           #" ![](./pic/pic1s.png =250x)
@@ -93,7 +89,7 @@ module HTML
           end
           htmlContent
         }
-        @tags[:list] = lambda{|htmlContent|replaceLists(htmlContent)}
+        @tags.push lambda{|htmlContent|replaceLists(htmlContent)}
     end
   
     def tags
@@ -104,8 +100,8 @@ module HTML
     
     def simple_tag_matcher(tag, open_tag_replacement="", close_tag_replacement="")
       #puts "Tag => #{tag} close Replacement => #{close_tag_replacement}"
-      open_tag_regex = /<#{tag}\b[^>]*>/
-      close_tag_regex = /<\/#{tag}>/
+      open_tag_regex = Regexp.new("<\s*#{tag}[^>]*>")
+      close_tag_regex = Regexp.new("<\s*\/#{tag}\s*>")
       return lambda{ |content|
         content.gsub(open_tag_regex, open_tag_replacement).gsub(close_tag_regex, close_tag_replacement)
       }
@@ -139,6 +135,7 @@ module HTML
       end
       htmlContent.gsub!(/<ul\b[^>]*>|<ol\b[^>]*>/, "")
       htmlContent.gsub!(/<\/ul>|<\/ol>|<\/li>/, "")
+      htmlContent
     end      
   end
 end
