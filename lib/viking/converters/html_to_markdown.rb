@@ -1,7 +1,5 @@
-require_relative "../html/patterns.rb"
-
-module CONVERTER
-
+module Viking
+  module Converters
   ##
   # This class handle the html2md part
   
@@ -11,7 +9,7 @@ module CONVERTER
     def initialize(html)
       @html           = html
       @markdown       = nil
-      @patterns       = HTML::Patterns.new
+      @patterns       = Viking::Patterns.new
     end
 
     def markdown
@@ -27,6 +25,9 @@ module CONVERTER
     private 
     
       #TODO output the converted content into a .md instead of showing it
+      #I suggest this is the job of the caller - the class is more flexible if it just outputs a string.
+      # That string can then be written to a file...or the network, or embedded in a template...etc
       
-  end 
+    end 
+  end
 end

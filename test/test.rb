@@ -1,10 +1,9 @@
-#!/usr/bin/env ruby
 require 'minitest/autorun'
-Dir["../lib/converter/*.rb"].each {|file| require file}
+require 'viking'
 
 class TestHTMLToMd < Minitest::Test
 	def setup
-		@hmd = CONVERTER::HtmlToMd.new("")
+		@hmd = Viking::Converters::HtmlToMd.new("")
 	end
 
 	def test_converts_h3
