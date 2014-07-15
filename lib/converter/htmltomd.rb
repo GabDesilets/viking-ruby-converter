@@ -7,20 +7,21 @@ module CONVERTER
   
   class HtmlToMd
     attr_accessor :html
-    ##
-    # Initialize a few instance variables before we start
     
     def initialize(html)
       @html           = html
-      @markdown = nil
+      @markdown       = nil
       @patterns       = HTML::Patterns.new
     end
 
     def markdown
-      @markdown ||= @patterns.tags.values.inject(@html) do |result, element|
-        element.call(result)
-      end
-      puts @md_output
+      @markdown ||= @patterns.tags.inject(@html) {|result, element| element.call(result)}
+    end
+
+    def html= html
+      @html = html
+      @markdown = nil
+      self
     end
     
     private 
