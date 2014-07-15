@@ -6,27 +6,18 @@ module CONVERTER
   # This class handle the html2md part
   
   class HtmlToMd
-
+    attr_accessor :html
     ##
     # Initialize a few instance variables before we start
     
-    def initialize(htmlFile)
-      @html_file      = htmlFile
-      @html_content   = nil
-      @md_output      = nil
+    def initialize(html)
+      @html           = html
+      @markdown = nil
       @patterns       = HTML::Patterns.new
     end
 
-    ##
-    # Show the raw content of the html file
-    # if the content isn't set, we'll set it
-
-    def raw_content
-      @html_content ||= File.read(@html_file)
-    end
-
-    def convert
-      @md_output ||= @patterns.tags.values.inject(raw_content) do |result, element|
+    def markdown
+      @markdown ||= @patterns.tags.values.inject(@html) do |result, element|
         element.call(result)
       end
       puts @md_output
