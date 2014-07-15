@@ -1,67 +1,40 @@
-Dir["../lib/html/*.rb"].each {|file| require file }
+require_relative "../html/patterns.rb"
 
 module CONVERTER
-  
+
   ##
   # This class handle the html2md part
   
   class HtmlToMd
-    
+
     ##
     # Initialize a few instance variables before we start
     
     def initialize(htmlFile)
-      @htmlFile      = htmlFile
-      @htmlContent   = nil
-      @patterns      = HTML::Patterns.new
+      @html_file      = htmlFile
+      @html_content   = nil
+      @md_output      = nil
+      @patterns       = HTML::Patterns.new
     end
-  
+
     ##
     # Show the raw content of the html file
-    # if the content isn't set, we'll call the set methode
+    # if the content isn't set, we'll set it
 
-    def showRawContent()
-      if ! @htmlContent.nil?
-        setHtmlContent()
-      end
-      puts @htmlContent
+    def raw_content
+      @html_content ||= File.read(@html_file)
     end
 
-    ##
-    # Call the convertion methode
-    # call set methode for the html content if it's not setted
-    
     def convert
-      if @htmlContent.nil?
-        setHtmlContent()
+      @md_output ||= @patterns.tags.values.inject(raw_content) do |result, element|
+        element.call(result)
       end
-      doConvertion()
     end
     
     private 
     
-    ##
-    # Set the html content if it wasn't already set
-    
-    def setHtmlContent()
-      if ! @htmlFile.nil?
-        @htmlContent = File.open(@htmlFile, "rb").read
-      end
-    end
-
-    ##
-    # Iterate through all the tags we setted in our patterns class
-    # and call their replacement method
-    
-    def doConvertion()
-      @patterns.getTags.each do |htmlTag, replacement|
-        replacement.call(@htmlContent)
-      end
-      
       #TODO output the converted content into a .md instead of showing it
       
-      puts @htmlContent
-    end 
-      
-  end
+      #puts @htmlContent
+  end 
 end
