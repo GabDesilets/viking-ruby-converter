@@ -2,7 +2,7 @@ module Viking
   
   ##
   # Class
-  # @author Gabriel Désilets
+  # @author Gabriel Désilets(bestdramana)
   # This class handle the patterns and their replacements
   
   class Patterns    
@@ -20,7 +20,7 @@ module Viking
         ["h6", "######", ""],
         ["i", "_", "_"],
         ["em", "_", "_"],
-        ["b", "**", "**"],
+        ["b(?!r)", "**", "**"],# br tag was entering here before - Gabriel(bestdramana)
         ["strong", "**", "**"],
         ["strike", "~~", "~~"],
         ["br", $/, $/],
@@ -39,7 +39,7 @@ module Viking
           # groupe 1 => the <a href></a>  itself
           # groupe 2 => href value 
           # groupe 3 => text
-          aElementReg = /(<a\s+(?:[^>]*?\s+)?href="([^"]*)">([\s\S]*?)<\/a>)/
+          aElementReg = /(<a\s+(?:[^>]*?\s+)?href=(?:'|")([^"]*)(?:'|")>([\s\S]*?)<\/a>)/
           
           #Loop trough all the matches
           htmlContent.scan(aElementReg){|pattern|
