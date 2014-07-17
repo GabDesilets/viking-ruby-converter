@@ -58,8 +58,6 @@ module Viking
            
           # will contain the elements to replace once we've dealed with the scan
           elementsToReplace = {}
-          
-          # TODO ADD THE WIDTH ATTRIBUTE
          
           # I've changed the way i was doing it, i think it's better this way. 
           # Instead of writing the code 3 time - Gabriel(bestdramana)
