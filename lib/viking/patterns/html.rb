@@ -18,7 +18,7 @@ module Viking
         ["h4", "####", ""],
         ["h5", "#####", ""],
         ["h6", "######", ""],
-        ["i", "_", "_"],
+        ["i(?!mg)", "_", "_"],# img tag was entering here before - Gabriel(bestdramana)
         ["em", "_", "_"],
         ["b(?!r)", "**", "**"],# br tag was entering here before - Gabriel(bestdramana)
         ["strong", "**", "**"],
@@ -55,41 +55,40 @@ module Viking
         }
 
         @tags.push lambda{|htmlContent|
-          
-          # this one ain't gonna be pretty sorry !
-          #" ![](./pic/pic1s.png =250x)
-          #<\s*img\s*alt="?(.*?)"?\s*src="?(.*?)"?\s*width="?(.*?)"?\s*height="?(.*?)"?\s*\/?>
-          #(<img\s+[^>]*src="([^"]*)"[^>]*>)
-          
-          srcReg = /(<img\s+[^>]*src="([^"]*)"[^>]*>)/
-          altReg = /(<img\s+[^>]*alt="([^"]*)"[^>]*>)/
-          
+           
           # will contain the elements to replace once we've dealed with the scan
           elementsToReplace = {}
           
-          # The reason i'm doing 2 .scan with 2 different regex, is because i can't
-          # predict the order of the tags when the end user write his html :(
-          # and i'm to lazy for another solution at the moment...have mercy on my soul
-          
-          #Loop trough all the matches for the SRC
-          htmlContent.scan(srcReg) {|pattern|
-              elementsToReplace[pattern[0]] = [pattern[1]]
-          }
-          
-          #Loop trough all the matches for the ALT
-          htmlContent.scan(altReg) {|pattern|
-              elementsToReplace[pattern[0]].push(pattern[1])
-          }
-          
           # TODO ADD THE WIDTH ATTRIBUTE
-          
+         
+          # I've changed the way i was doing it, i think it's better this way. 
+          # Instead of writing the code 3 time - Gabriel(bestdramana)
+          ["src", "alt", "width", "height"].each{|tag|
+            tag_regex = Regexp.new("(<img.+?#{tag}=[\"'](.+?)[\"'].*?>)")
+            #Loop trough all the matches for the tag
+            htmlContent.scan(tag_regex) {|pattern|
+              elementsToReplace.key?(pattern[0]) \
+              ? elementsToReplace[pattern[0]].push(pattern[1]) \
+              : elementsToReplace[pattern[0]] = [pattern[1]]
+            }
+          }
+              
           #Loop trough all the elements to replace
           elementsToReplace.each do |rawElement, values|
-            htmlContent.gsub!(rawElement, "![#{values[0]}](#{values[1]})")
+            replacement = "![#{values[1]}](#{values[0]}" 
+            #Could and should be smarter... sorry brain fart - Gabriel(bestdramana)
+            if values[2] && values[3]
+              replacement += " =#{values[2]}x#{values[3]}"
+            elsif values[2] && !values[3]
+              replacement += " =#{values[2]}x"
+
+            end
+            replacement += ")"
+            htmlContent.gsub!(rawElement, replacement)
           end
           htmlContent
         }
-        @tags.push lambda{|htmlContent|replaceLists(htmlContent)}
+        @tags.push lambda{|htmlContent|replace_lists(htmlContent)}
     end
   
     def tags
@@ -107,7 +106,7 @@ module Viking
       }
     end 
 
-    def replaceLists(htmlContent) 
+    def replace_lists(htmlContent) 
       ulolReg = /<(ul|ol)\b[^>]*>([\s\S]*?)<\/\1>/
       convertedEls = ""
       
