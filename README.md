@@ -9,14 +9,14 @@ I decide to learn ruby not long ago and i tought it would be fun to make a conve
 
 ## TODO
 * Add the list base test cases
-* Do a better job with the **replace_lists** method
+* Do a better job with the **[replace_lists](https://github.com/bestdramana/viking-ruby-converter/blob/master/lib/viking/patterns/html.rb#L107-L136)** method
 * Check for nested list i don't think i handle them for now :(
 * Review the img lambda
 * Parse table maybe one day !
 * CSS ? [well not yet]
 
 ## Testing ?
-Rake
+Rake  ```gem install rake```  
 Goto ~/Path/To/viking-ruby-converter then type rake
 
 ## Dependencies
