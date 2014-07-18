@@ -22,4 +22,13 @@ class TestNode < Minitest::Test
     assert_equal :a, @n.name
   end
 
+  def test_text_node
+    @n = Viking::HTML::TextNode.new("A jolly good text.", nil)
+    assert_equal "A jolly good text.", @n.content 
+  end
+
+  def test_node
+    @n = Viking::HTML::Node.new(nil,nil)
+    refute_nil @n
+  end
 end

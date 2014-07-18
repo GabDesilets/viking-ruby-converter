@@ -3,7 +3,8 @@ module Viking
 		require 'strscan'
 
 		class Node
-			attr_accessor :children, :name, :content
+			attr_accessor :children, :name
+			attr_reader :parent, :content
 
 			def initialize(content, parent)
 				@parent = parent
@@ -14,7 +15,8 @@ module Viking
 			end
 
 			def to_s
-				@children.join()
+				#TODO - This should be overridden by a Markdown emitter?
+				"<#{@name || "root"}>" + (@children.select {|t| t.instance_of?(Viking::HTML::StartNode)}).join + "</#{@name || "root"}>" 
 			end
 		end
 
@@ -62,6 +64,12 @@ module Viking
 				s = StringScanner.new(content)
 				s.skip(/^<\s*\//)# skip the initial tag delimeter
 				@name = s.scan(/\s*(\w+)\s*/).gsub(/\s/,'').to_sym
+			end
+		end
+
+		class TextNode < Node
+			def initialize(content, parent)
+				super content, parent
 			end
 		end
 	end
